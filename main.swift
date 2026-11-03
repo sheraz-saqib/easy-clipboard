@@ -473,6 +473,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         statusItem.button?.image = icon ?? NSImage(systemSymbolName: "list.clipboard", accessibilityDescription: "Easy Clipboard")
         let menu = NSMenu()
         menu.addItem(withTitle: "Show History  ⌃V", action: #selector(show), keyEquivalent: "").target = self
+        // On by default: register once on first launch; after that the menu toggle owns it.
+        if !UserDefaults.standard.bool(forKey: "loginDefaultApplied") {
+            try? SMAppService.mainApp.register()
+            UserDefaults.standard.set(true, forKey: "loginDefaultApplied")
+        }
         let login = menu.addItem(withTitle: "Launch at Login", action: #selector(toggleLogin(_:)), keyEquivalent: "")
         login.target = self
         login.state = SMAppService.mainApp.status == .enabled ? .on : .off
