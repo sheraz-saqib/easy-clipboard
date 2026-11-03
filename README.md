@@ -44,7 +44,7 @@
 - **Everything stays on your Mac.** Easy Clipboard has no servers, no account, no analytics, and no network code at all.
 - **Encrypted.** Your history and images are stored encrypted (AES‑256). The key is kept in your macOS Keychain.
 - **Passwords are skipped.** Items that password managers mark as secret are never saved.
-- **Clean uninstall.** Use **Uninstall Easy Clipboard…** in the menu bar, or drag the app to the Trash while it's running. Either way, all its data and the Keychain key are deleted.
+- **Clean uninstall.** Use **Uninstall Easy Clipboard…** in the menu bar: it moves the app to the Trash and deletes all its data and the Keychain key. (Finder won't trash the app while it's running; if you Quit first and then trash it, your data stays behind.)
 - **Open source.** Every line of code is in this repo for you to check.
 
 ## Install
