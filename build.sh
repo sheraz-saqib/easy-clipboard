@@ -12,6 +12,11 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources" build/AppIcon.iconset
 # Keep target in sync with LSMinimumSystemVersion in Info.plist (default would be the host's macOS).
 swiftc -O -swift-version 5 -target arm64-apple-macos14.0 main.swift -o "$APP/Contents/MacOS/EasyClipboard"
 cp Info.plist "$APP/Contents/"
+# CI passes VERSION from the git tag (v1.2 → 1.2); local builds keep Info.plist's value.
+if [[ -n "${VERSION:-}" ]]; then
+  plutil -replace CFBundleShortVersionString -string "$VERSION" "$APP/Contents/Info.plist"
+  plutil -replace CFBundleVersion -string "$VERSION" "$APP/Contents/Info.plist"
+fi
 
 swift icon.swift build/icon.png "$APP/Contents/Resources/MenuIcon.png"
 for s in 16 32 128 256 512; do
