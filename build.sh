@@ -25,13 +25,16 @@ for s in 16 32 128 256 512; do
 done
 iconutil -c icns build/AppIcon.iconset -o "$APP/Contents/Resources/AppIcon.icns"
 
-codesign --force --sign - "$APP"
+# Stable local identity if present (easy-finder/scripts/make-cert.sh creates it): macOS then keeps the
+# Accessibility grant across rebuilds. Otherwise ad-hoc (CI). Set SIGN_ID for a real Developer ID.
+if [[ -z "${SIGN_ID:-}" ]] && security find-certificate -c "Easy Finder Dev" >/dev/null 2>&1; then SIGN_ID="Easy Finder Dev"; fi
+codesign --force --sign "${SIGN_ID:--}" "$APP"
 echo "Built $APP"
 
 if [[ "${1:-}" == "install" ]]; then
   # Ad-hoc signature changes every build, so the old Accessibility grant goes stale
   # (toggle still shows ON but doesn't apply). Reset it so launch prompts fresh.
-  tccutil reset Accessibility com.sherazcoder.easyclipboard >/dev/null 2>&1 || true
+  [[ "${SIGN_ID:--}" == "-" ]] && { tccutil reset Accessibility com.sherazcoder.easyclipboard >/dev/null 2>&1 || true; }
   pkill -x EasyClipboard && sleep 1 || true
   rm -rf "/Applications/Easy Clipboard.app"
   cp -R "$APP" /Applications/
